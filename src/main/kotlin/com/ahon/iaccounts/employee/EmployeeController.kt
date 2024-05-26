@@ -3,6 +3,7 @@ package com.ahon.iaccounts.employee
 import com.ahon.iaccounts.entity.Employee
 import com.ahon.iaccounts.util.JwtService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -24,11 +25,14 @@ class EmployeeController {
     fun login(@RequestBody employee: Employee): ResponseEntity<String> {
         return if (employeeService.login(employee)) {
 
-            ResponseEntity(
-                jwtService.bearerHeader(employee.username),
-                HttpStatus.OK
+            val httpHeaders = HttpHeaders()
+            httpHeaders.setBearerAuth(
+                jwtService.generateToken(employee.username)
             )
-        } else ResponseEntity("",HttpStatus.OK)
+
+            ResponseEntity(httpHeaders, HttpStatus.OK)
+
+        } else ResponseEntity(HttpStatus.OK)
     }
 
     @GetMapping("/all")
@@ -43,7 +47,7 @@ class EmployeeController {
         }
 
     @GetMapping("/{id}")
-    fun findAll(
+    fun findById(
         @PathVariable
         id: Int,
 

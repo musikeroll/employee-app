@@ -5,8 +5,6 @@ import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import java.util.*
 import javax.crypto.SecretKey
 
@@ -20,7 +18,6 @@ class JwtService {
     private lateinit var expireTime: String
 
     fun validate(headerToken: String): Boolean {
-
 
         val bearerToken = headerToken.replace("Bearer ", "")
 
@@ -43,15 +40,7 @@ class JwtService {
         }
     }
 
-    fun bearerHeader(username: String): MultiValueMap<String, String> {
-        val bearerToken = generateToken(username)
-        val multiValueMap: MultiValueMap<String, String> = LinkedMultiValueMap()
-        multiValueMap.add("Authorization", "Bearer $bearerToken")
-
-        return multiValueMap
-    }
-
-    private fun generateToken(username: String): String =
+    fun generateToken(username: String): String =
         Jwts.builder()
             .subject(username)
             .issuedAt(Date(System.currentTimeMillis()))

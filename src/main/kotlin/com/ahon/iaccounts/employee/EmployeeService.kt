@@ -7,17 +7,16 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class EmployeeService {
+class EmployeeService(
+    @Autowired private val employeeRepository: EmployeeRepository
+) {
 
-    @Autowired
-    private lateinit var employeeRepository: EmployeeRepository
-
-    fun loadData() {
-        employeeRepository.save(Employee(username = "elvis", password = "password"))
-        employeeRepository.save(Employee(username = "eminem", password = "password"))
-        employeeRepository.save(Employee(username = "metallica", password = "password"))
-        employeeRepository.save(Employee(username = "nirvana", password = "password"))
-    }
+    fun loadData(usernames: List<String>): List<Employee> =
+        employeeRepository.saveAll(
+            usernames.map {
+                Employee(username = it, password = "password")
+            }
+        )
 
     fun login(employee: Employee): Boolean =
         employeeRepository.findByUsernameAndPassword(
